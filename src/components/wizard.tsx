@@ -8,7 +8,7 @@ function padInteger(n: number) {
 }
 
 const Wizard = () => {
-  const [peopleInMeeting, setPeopleInMeeting] = useState(10);
+  const [peopleInMeeting, setPeopleInMeeting] = useState(0);
   const [duration, setDuration] = useState(0);
   const [liveTimerActive, setLiveTimerActive] = useState(false);
   const [hourlyCost, setHourlyCost] = useState(100);
