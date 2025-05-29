@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
 ---
 
 <!doctype html>
@@ -31,5 +32,6 @@ import "../styles/global.css";
   </head>
   <body class="bg-peachy text-peachy-dark font-ubuntu">
     <slot />
+    <Analytics />
   </body>
 </html>
