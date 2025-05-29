@@ -129,7 +129,7 @@ const Wizard = () => {
 
       {((peopleInMeeting > 0 && duration > 0) || liveTimerActive) && (
         <div>
-          <div className="text-6xl">
+          <div className="text-6xl break-all">
             <CurrencyWrapper currencyPattern={currencyOrDefault(currency).unit}>
               {Math.round((peopleInMeeting * duration * hourlyCost) / 60 / 60)}
             </CurrencyWrapper>
