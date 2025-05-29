@@ -34,7 +34,7 @@ const Wizard = () => {
   const [hourlyCost, setHourlyCost] = useState(
     parseNumberOrFallback(
       params.get("cost"),
-      defaultCostUSD * Math.round(currencyOrDefault(currency).conversion),
+      Math.round(defaultCostUSD * currencyOrDefault(currency).conversion),
     ),
   );
   const [shareButtonText, setShareButtonText] = useState("Copy shareable link");
