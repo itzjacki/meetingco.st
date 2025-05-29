@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import { currencies, currencyOrDefault } from "../data/currencies";
+import CurrencyWrapper from "./currencyWrapper";
 
 function padInteger(n: number) {
   return n.toLocaleString("en-US", {
@@ -12,6 +14,7 @@ const Wizard = () => {
   const [duration, setDuration] = useState(0);
   const [liveTimerActive, setLiveTimerActive] = useState(false);
   const [hourlyCost, setHourlyCost] = useState(100);
+  const [currency, setCurrency] = useState("USD");
   const intervalRef = useRef<NodeJS.Timeout>(undefined);
 
   return (
@@ -68,8 +71,10 @@ const Wizard = () => {
 
       {(peopleInMeeting > 0 && duration > 0) || liveTimerActive ? (
         <div>
-          <div className="text-8xl">
-            ${Math.round((peopleInMeeting * duration * hourlyCost) / 60 / 60)}
+          <div className="text-6xl">
+            <CurrencyWrapper currencyPattern={currencyOrDefault(currency).unit}>
+              {Math.round((peopleInMeeting * duration * hourlyCost) / 60 / 60)}
+            </CurrencyWrapper>
           </div>
         </div>
       ) : null}
@@ -108,26 +113,52 @@ const Wizard = () => {
       ) : null}
 
       <div className="text-lg font-normal italic mx-auto text-center">
-        <label htmlFor="hourlyCostInput">
-          Assumes an hourly labor cost of $
-        </label>
-        <input
-          id="hourlyCostInput"
-          type="number"
-          className="border-b-1 border-peachy-dark min-w-10 text-center field-sizing-content not-supports-[field-sizing:content]:w-10"
-          value={hourlyCost > 0 ? hourlyCost : ""}
+        <label htmlFor="currencySelect">Currency:</label>
+        <select
+          name="currency"
+          id="currencySelect"
+          className="mr-1 underline"
+          value={currency}
           onChange={(e) => {
-            const value = e.target.value;
-            if (!isNaN(+value)) {
-              setHourlyCost(+value);
-            }
+            const newCurrency = e.target.value;
+            setHourlyCost((oldCost) =>
+              Math.round(
+                (oldCost * currencyOrDefault(newCurrency).conversion) /
+                  currencyOrDefault(currency).conversion,
+              ),
+            );
+            setCurrency(newCurrency);
           }}
-        />
-        <span className="mr-2">. More silly experiments at</span>
+        >
+          {Object.keys(currencies).map((currency) => (
+            <option value={currency}>{currency}</option>
+          ))}
+        </select>
+
+        <label htmlFor="hourlyCostInput" className="mr-1">
+          Assumes an hourly labor cost of
+        </label>
+        <CurrencyWrapper currencyPattern={currencyOrDefault(currency).unit}>
+          <input
+            id="hourlyCostInput"
+            type="number"
+            className="border-b-1 border-peachy-dark min-w-10 text-center field-sizing-content not-supports-[field-sizing:content]:w-10"
+            value={hourlyCost > 0 ? hourlyCost : ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (!isNaN(+value)) {
+                setHourlyCost(+value);
+              }
+            }}
+          />
+        </CurrencyWrapper>
+        <span className="mr-1">.</span>
+
+        <span className="mr-1">More silly experiments at</span>
         <a className="underline" href="https://jakob.fun">
           jakob.fun
         </a>
-        .
+        <span>.</span>
       </div>
     </>
   );
