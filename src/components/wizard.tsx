@@ -35,26 +35,24 @@ const Wizard = () => {
       </div>
 
       {peopleInMeeting > 0 && !liveTimerActive ? (
-        <>
-          <div>
-            <label htmlFor="durationInput">
-              <span className="mr-2">Duration of meeting:</span>
-              <input
-                id="durationInput"
-                type="number"
-                className="border-b-4 border-peachy-dark min-w-16 mr-2 text-center field-sizing-content not-supports-[field-sizing:content]:w-16"
-                value={duration > 0 ? Math.floor(duration / 60) : ""}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (!isNaN(+value)) {
-                    setDuration(+value * 60);
-                  }
-                }}
-              />
-              <span>mins</span>
-            </label>
-          </div>
-        </>
+        <div>
+          <label htmlFor="durationInput">
+            <span className="mr-2">Duration of meeting:</span>
+            <input
+              id="durationInput"
+              type="number"
+              className="border-b-4 border-peachy-dark min-w-16 mr-2 text-center field-sizing-content not-supports-[field-sizing:content]:w-16"
+              value={duration > 0 ? Math.floor(duration / 60) : ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!isNaN(+value)) {
+                  setDuration(+value * 60);
+                }
+              }}
+            />
+            <span>mins</span>
+          </label>
+        </div>
       ) : null}
 
       {peopleInMeeting > 0 && liveTimerActive ? (
@@ -84,6 +82,7 @@ const Wizard = () => {
           <button
             className="bg-peachy-surface hover:bg-peachy-surface-hover active:bg-peachy-surface-active rounded-xl w-fit max-w-72 px-8 py-4"
             onClick={() => {
+              setDuration(0);
               setLiveTimerActive(true);
               const intervalID = setInterval(() => {
                 setDuration((oldDuration) => oldDuration + 1);
