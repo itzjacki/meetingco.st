@@ -5,6 +5,7 @@ Ever wondered how much a meeting costs? This site acts as a simple calculator to
 ## Todos:
 
 - Use IP location to better estimate hourly cost
+- Support more currencies
 - Make live counter more resilient by implementing second check using time differences
 - Set up database to keep track of total cost of meetings tracked with website
 - I feel kind of gross for shipping the whole React bundle for such a basic level of funcionality, so maybe I will un-react this at some point in the future. Who knows.
