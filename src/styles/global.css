@@ -20,7 +20,7 @@ body {
 }
 
 /* Hack to hide number spinners */
-@media (max-width: 600px) {
+@media (min-width: 600px) {
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {

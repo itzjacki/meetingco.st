@@ -9,13 +9,69 @@ function padInteger(n: number) {
   });
 }
 
+function parseNumberOrFallback(input: string | null, fallback: number) {
+  if (input && !isNaN(+input)) {
+    return +input;
+  }
+  return fallback;
+}
+
 const Wizard = () => {
-  const [peopleInMeeting, setPeopleInMeeting] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const params = new URLSearchParams(window.location.search);
+
+  const defaultCostUSD = 100;
+  const defaultCurrency = "USD";
+  const [peopleInMeeting, setPeopleInMeeting] = useState(
+    parseNumberOrFallback(params.get("people"), 0),
+  );
+  const [duration, setDuration] = useState(
+    parseNumberOrFallback(params.get("duration"), 0) * 60,
+  );
   const [liveTimerActive, setLiveTimerActive] = useState(false);
-  const [hourlyCost, setHourlyCost] = useState(100);
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState(
+    params.get("currency") ?? defaultCurrency,
+  );
+  const [hourlyCost, setHourlyCost] = useState(
+    parseNumberOrFallback(
+      params.get("cost"),
+      defaultCostUSD * Math.round(currencyOrDefault(currency).conversion),
+    ),
+  );
+  const [shareButtonText, setShareButtonText] = useState("Copy shareable link");
   const intervalRef = useRef<NodeJS.Timeout>(undefined);
+
+  function getShareableLink() {
+    const url = new URL(window.location.origin);
+
+    // Early return if no params. Button shouldn't be visible but just in case.
+    if (duration === 0 || peopleInMeeting === 0) {
+      return url.toString();
+    }
+
+    const urlParams = new URLSearchParams();
+
+    urlParams.set("people", peopleInMeeting.toString());
+    urlParams.set("duration", Math.floor(duration / 60).toString());
+
+    if (
+      Math.round(hourlyCost / currencyOrDefault(currency).conversion) !==
+      defaultCostUSD
+    ) {
+      urlParams.set("cost", hourlyCost.toString());
+    }
+
+    if (currency !== defaultCurrency) {
+      urlParams.set("currency", currency);
+    }
+
+    return url.toString() + "?" + urlParams.toString();
+  }
+
+  function doShareFeedback() {
+    const oldText = shareButtonText;
+    setShareButtonText("Copied!");
+    setTimeout(() => setShareButtonText(oldText), 1000);
+  }
 
   return (
     <>
@@ -37,7 +93,7 @@ const Wizard = () => {
         />
       </div>
 
-      {peopleInMeeting > 0 && !liveTimerActive ? (
+      {peopleInMeeting > 0 && !liveTimerActive && (
         <div>
           <label htmlFor="durationInput">
             <span className="mr-2">Duration of meeting:</span>
@@ -56,9 +112,9 @@ const Wizard = () => {
             <span>mins</span>
           </label>
         </div>
-      ) : null}
+      )}
 
-      {peopleInMeeting > 0 && liveTimerActive ? (
+      {peopleInMeeting > 0 && liveTimerActive && (
         <div>
           <div>Time elapsed:</div>
           <div>
@@ -67,21 +123,33 @@ const Wizard = () => {
             {padInteger(duration % 60)}
           </div>
         </div>
-      ) : null}
+      )}
 
-      {(peopleInMeeting > 0 && duration > 0) || liveTimerActive ? (
+      {((peopleInMeeting > 0 && duration > 0) || liveTimerActive) && (
         <div>
           <div className="text-6xl">
             <CurrencyWrapper currencyPattern={currencyOrDefault(currency).unit}>
               {Math.round((peopleInMeeting * duration * hourlyCost) / 60 / 60)}
             </CurrencyWrapper>
           </div>
+          {!liveTimerActive && (
+            <button
+              className="text-lg font-normal italic underline"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(getShareableLink())
+                  .then(doShareFeedback);
+              }}
+            >
+              {shareButtonText}
+            </button>
+          )}
         </div>
-      ) : null}
+      )}
 
       <div className="grow" />
 
-      {peopleInMeeting > 0 && !liveTimerActive ? (
+      {peopleInMeeting > 0 && !liveTimerActive && (
         <div className="text-2xl mx-auto">
           <span className="mr-4">Or</span>
           <button
@@ -98,9 +166,9 @@ const Wizard = () => {
             start a live counter
           </button>
         </div>
-      ) : null}
+      )}
 
-      {liveTimerActive ? (
+      {liveTimerActive && (
         <button
           className="mx-auto text-2xl bg-peachy-surface hover:bg-peachy-surface-hover active:bg-peachy-surface-active rounded-xl w-fit max-w-72 px-8 py-4"
           onClick={() => {
@@ -110,7 +178,7 @@ const Wizard = () => {
         >
           Stop live counter
         </button>
-      ) : null}
+      )}
 
       <div className="text-lg font-normal italic mx-auto text-center">
         <label htmlFor="currencySelect">Currency:</label>
@@ -130,8 +198,10 @@ const Wizard = () => {
             setCurrency(newCurrency);
           }}
         >
-          {Object.keys(currencies).map((currency) => (
-            <option value={currency}>{currency}</option>
+          {Object.keys(currencies).map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
 
