@@ -20,7 +20,7 @@ const Wizard = () => {
         <span className="mr-2">Number of people in meeting:</span>
         <input
           type="number"
-          className="border-b-4 border-peachy-dark w-16 text-center"
+          className="border-b-4 border-peachy-dark min-w-16 text-center field-sizing-content not-supports-[field-sizing:content]:w-16"
           value={peopleInMeeting > 0 ? peopleInMeeting : ""}
           onChange={(e) => {
             const value = e.target.value;
@@ -38,7 +38,7 @@ const Wizard = () => {
             <span>
               <input
                 type="number"
-                className="border-b-4 border-peachy-dark w-16 mr-2 text-center"
+                className="border-b-4 border-peachy-dark min-w-16 mr-2 text-center field-sizing-content not-supports-[field-sizing:content]:w-16"
                 value={duration > 0 ? Math.floor(duration / 60) : ""}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -108,7 +108,7 @@ const Wizard = () => {
         <span>Assumes an hourly labor cost of $</span>
         <input
           type="number"
-          className="border-b-1 border-peachy-dark w-10 text-center"
+          className="border-b-1 border-peachy-dark min-w-10 text-center field-sizing-content not-supports-[field-sizing:content]:w-10"
           value={hourlyCost > 0 ? hourlyCost : ""}
           onChange={(e) => {
             const value = e.target.value;
