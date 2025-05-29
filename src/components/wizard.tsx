@@ -104,11 +104,11 @@ const Wizard = () => {
         </button>
       ) : null}
 
-      <div className="text-lg font-normal italic mx-auto">
+      <div className="text-lg font-normal italic mx-auto text-center">
         <span>Assumes an hourly labor cost of $</span>
         <input
           type="number"
-          className="border-b-1 border-peachy-dark w-10 mr-1 text-center"
+          className="border-b-1 border-peachy-dark w-10 text-center"
           value={hourlyCost > 0 ? hourlyCost : ""}
           onChange={(e) => {
             const value = e.target.value;
@@ -117,6 +117,11 @@ const Wizard = () => {
             }
           }}
         />
+        <span className="mr-2">. More silly experiments at</span>
+        <a className="underline" href="https://jakob.fun">
+          jakob.fun
+        </a>
+        .
       </div>
     </>
   );
